@@ -1,0 +1,373 @@
+html, body {
+    padding: 0;
+    margin: 0;
+    font-family: sans-serif;
+}
+.h20 { height: 20px; }
+.h50 { height: 50px; }
+.h160 { height: 160px; }
+.h350 { height: 350px; }
+.h240 { height: 240px; }
+.invisible {
+    visibility: hidden;
+}
+.main_wrapper {
+    width: 100%;
+    min-width: 320px;
+    background: #ffffff;
+}
+div.site_title {
+    font-size: 24px;
+    padding: 0 20px;
+    color: #4dacf6;
+    font-family: sans-serif;
+}
+div.site_description {
+    font-size: 18px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+form.login {
+    margin: auto;
+}
+form.login .form-control {
+    display: block;
+    width: 100%;
+    padding: 0 20px;
+    position: relative;
+    box-sizing: border-box;
+}
+form.login .form-control input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 18px;
+    border: none;
+    border-bottom: 1px solid #aaaaaa;
+    margin-top: 15px;
+    padding: 10px 5px;
+    color: #333333;
+}
+form.login .form-control input:focus {
+    outline: none;
+    border-bottom-color: #333333;
+}
+form.login .form-control button {
+    width: 100%;
+    margin-top: 15px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 20px;
+}
+button:focus, button:active {
+    outline: none;
+}
+.blue-btn {
+    border: none;
+    background-color: #4dacf6;
+    color: #FFFFFF;
+    border-radius: 3px;
+}
+form.login .err_msg {
+    font-size: 16px;
+    height: 20px;
+    line-height: 20px;
+    margin-top: 15px;
+    color: rgb(254,148,148);
+}
+.login_foot {
+    margin-top: 50px;
+    font-size: 16px;
+    color: #333;
+    padding: 0 20px;
+}
+.login_foot a {
+    color: #4dacf6;
+    text-decoration: none;
+}
+
+div.topbar {
+    width: 100%;
+    /*background-color: #4dacf6;*/
+    background:linear-gradient(to bottom, #3ba6de, #4dacf6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+.topbar .back_btn {
+    position: absolute;
+    top:0;
+    left:0;
+    width: 50px;
+    height: 50px;
+    color: #ffffff;
+}
+.topbar .back_btn img{
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+    margin: 10px;
+}
+.topbar .page_title {
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+    height: 50px;
+    line-height: 50px;
+    letter-spacing: 2px;
+}
+.topbar .panel {
+    padding: 0;
+    position: relative;
+}
+.goals_statistics {
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    border: 5px solid rgba(255,255,255, 0.7);
+    border-radius: 55px;
+    text-align: center;
+    line-height: 30px;
+    color: #ffffff;
+}
+.goals_statistics p {
+    margin: 0;
+}
+.goals_statistics .goals_number {
+    margin-top: 20px;
+    font-size: 28px;
+    color: #ffffff;
+}
+ul.goals_list {
+    padding: 0;
+    margin: 200px 0 0 0;
+    z-index: 1;
+}
+ul.goals_list li {
+    list-style: none;
+    width: 100%;
+    position: relative;
+}
+.goals_list .goal_item {
+    border-bottom: 1px solid #eeeeee;
+}
+.goals_list .goal_item .index_num{
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+    float: left;
+    display: block;
+    text-align: center;
+    margin-right: 10px;
+}
+.goals_list .goal_item .index_num span {
+    margin: 0;
+    display: block;
+    color: #ffffff;
+    width: 60px;
+    height: 61px;
+    line-height: 60px;
+    background-color: #d43f3a;
+}
+.goal_item .title {
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+    color: #333;
+    vertical-align: baseline;
+}
+.goal_item .title span {
+    line-height: 20px;
+    vertical-align: bottom;
+}
+.goal_item .start_date {
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #aaaaaa;
+    vertical-align: top;
+}
+.goal_item .start_date span {
+    line-height: 20px;
+    vertical-align: top;
+}
+.add_btn {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 25px;
+    background-color: #4dacf6;
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    font-size: 32px;
+    color: #ffffff;
+    box-shadow: 0 3px 10px 0 #4dacf6;
+}
+
+/*goal detail*/
+.panel .goal_title {
+    text-align: center;
+    font-size: 18px;
+    color: #FFFFFF;
+    height: 40px;
+    line-height: 40px;
+}
+.panel .goal_note {
+    color: #EEEEEE;
+    font-size: 14px;
+    text-align: center;
+}
+.panel .goal_note span {
+    height: 30px;
+    line-height: 30px;
+    border-top: 1px solid #efefef;
+}
+div.btn {
+    margin: 0 10px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+}
+.empty_msg {
+    height: 100px;
+    line-height: 100px;
+    font-size: 16px;
+    color: #bbbbbb;
+    text-align: center;
+}
+.goals_list .goal_item .index_num span.footprint {
+    width: 30px;
+    height: 30px;
+    margin: 15px;
+    border-radius: 15px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 30px;
+}
+.panel .calendar_btn {
+    width:50px;
+    height: 50px;
+    position: absolute;
+    background-color: #ffffff;
+    bottom: -25px;
+    right: 25px;
+    border-radius: 25px;
+    box-shadow: 0 3px 10px 0 #aaaaaa;
+}
+.calendar_btn img {
+    width: 30px;
+    height: 30px;
+    margin: 10px;
+    vertical-align: middle;
+}
+.calendar_wrapper {
+    padding: 20px 0 0 0;
+    background-color: #ffffff;
+    border-bottom: 1px solid #EEEEEE;
+}
+.week_view {
+    background-color: #ffffff;
+}
+.week_view ul {
+    margin: 0;
+    font-size: 0;
+    padding: 0 5px;
+}
+.week_view ul li {
+    list-style: none;
+    display: inline-block;
+    width: 14.28%;
+    height: 100px;
+    font-size: 14px;
+    text-align: center;
+}
+.week_view ul li .title {
+    height: 45px;
+    margin: 0;
+    line-height: 45px;
+    font-size: 16px;
+}
+.week_view ul li .number_wrapper {
+    height: 55px;
+    line-height: 55px;
+}
+.week_view .number, .month_view .number {
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    margin: auto;
+    border-radius: 15px;
+    display: block;
+    color: #333;
+}
+.number_wrapper .indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    text-align: center;
+    display: block;
+    margin: auto;
+}
+.month_view .number_wrapper .indicator {
+    margin-top: -4px;
+}
+.number_wrapper.active .indicator {
+    display: none;
+}
+
+.month_view .control_bar {
+    width: 100%;
+    height: 30px;
+}
+.month_view .control_bar .month_name {
+    width: 120px;
+    font-size: 0;
+    margin: auto;
+}
+.month_name .year,.month_name .month {
+    width: 50%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+    text-align: center;
+    display: inline-block;
+}
+.month_view .control_bar .prev, .month_view .control_bar .next {
+    float: left;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.month_view .control_bar .next {
+    float: right;
+}
+.month_view .day_name {
+    margin:0;
+    padding: 0 5px;
+    height: 30px;
+    line-height: 30px;
+}
+.month_view .day_name .name {
+    width: 14.28%;
+    text-align: center;
+    display: inline-block;
+}
+.month_view .number_list {
+    margin:0;
+    padding: 0 5px;
+    font-size: 0;
+}
+.month_view .number_wrapper {
+    width: 14.28%;
+    text-align: center;
+    display: inline-block;
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+}

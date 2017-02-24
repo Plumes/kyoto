@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="theme-color" content="#4dacf6" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#3ba6de"/>
+    <title>今日子-目标列表</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <script src="assets/vue.js"></script>
+    <script src="assets/vue-resource.min.js"></script>
+</head>
+<body>
+<div class="main_wrapper" id="goals_page">
+    <div class="topbar">
+        <div class="page_title">
+            <span>目标列表</span>
+        </div>
+        <div class="panel" style="padding: 20px 0;">
+            <div class="goals_statistics">
+                <p class="goals_number">{{ goals_list.length }}</p>
+                <p>项目标</p>
+            </div>
+        </div>
+    </div>
+    <div class="goals_list_wrapper">
+        <ul class="goals_list">
+            <li class="goal_item" v-for="i in goals_list.length" :data-goal-id="goals_list[i-1].id" v-on:click="goToDetail(goals_list[i-1].id);">
+                <div class="index_num"><span :style="goals_list[i-1].style">{{i}}</span></div>
+                <div class="title"><span>{{ goals_list[i-1].name }}</span></div>
+                <div class="start_date"><span>{{ goals_list[i-1].created_at }}</span></div>
+            </li>
+        </ul>
+    </div>
+    <div class="add_btn" onclick="location.href='addGoal.html';">+</div>
+</div>
+<script>
+    var app = new Vue({
+        el : "#goals_page",
+        data : {
+            goals_list : []
+        },
+        mounted : function () {
+            var api_url = '/goals';
+            this.$http.get(api_url).then(function (response) {
+                response = response.body;
+                if(response.code==0) {
+                    this.goals_list = response.data;
+                    for(i in this.goals_list) {
+                        this.goals_list[i].style = 'background-color:#'+ this.goals_list[i].color;
+                    }
+                    console.log(this.goals_list);
+                } else if(response.code==-1){
+                    location.href = "login.html";
+                } else {
+                    console.log(response);
+                    return false;
+                }
+
+            }, function (response) {
+                console.log(response);
+                return false;
+            })
+        },
+        methods: {
+            goToDetail: function (goal_id) {
+                location.href = "goalDetail.html?id=" + goal_id;
+                return true;
+            }
+        }
+    });
+</script>
+</body>
+</html>

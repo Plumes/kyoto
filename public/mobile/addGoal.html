@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="theme-color" content="#4dacf6" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#3ba6de"/>
+    <title>今日子-目标列表</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <script src="assets/vue.js"></script>
+    <script src="assets/vue-resource.min.js"></script>
+</head>
+<body>
+<div class="main_wrapper" id="add_goal_page">
+    <div class="topbar">
+        <div class="back_btn" onclick="location.href='goals.html'"><img src="assets/images/left_arrow.svg" alt=""></div>
+        <div class="page_title">
+            <span>添加新目标</span>
+        </div>
+    </div>
+    <div class="h50"></div>
+    <form class="login">
+        <div class="form-control">
+            <input type="text" name="title" placeholder="目标名称" autocomplete="off" v-model="title" required>
+        </div>
+        <div class="form-control">
+            <input type="text" name="note" placeholder="备注" v-model="note">
+        </div>
+        <div class="err_msg form-control"><span>{{ err_msg }}</span></div>
+        <div class="form-control">
+            <button type="button" class="blue-btn" v-on:click="submit">完成</button>
+        </div>
+    </form>
+</div>
+<script>
+    var app = new Vue({
+        el: '#add_goal_page',
+        data: {
+            no_error: false,
+            err_msg: "",
+            title: "",
+            note: "",
+        },
+        methods: {
+            submit: function () {
+                this.no_error = true;
+                var api_url = "/goal";
+                var post_data = {
+                    'title' : this.title,
+                    'note' : this.note
+                }
+                this.$http.post(api_url, post_data).then(function (response) {
+                    var data = response.body;
+                    switch(data.code) {
+                        case 0:
+                            location.href = "goals.html";
+                            break;
+                        case 1:
+                            this.err_msg = "无效的标题";
+                            break;
+                        case -1:
+                            location.href = "login.html";
+                            break;
+                        default:
+                            this.err_msg = "网络错误，请稍后重试";
+                    }
+                    return false;
+                }, function (response) {
+                    console.log(response);
+                    return false;
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

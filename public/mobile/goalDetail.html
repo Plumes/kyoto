@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="theme-color" content="#4dacf6" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#3ba6de"/>
+    <title>今日子-目标详情</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <script src="assets/vue.js"></script>
+    <script src="assets/vue-resource.min.js"></script>
+    <script src="assets/common.js"></script>
+</head>
+<body>
+<div class="main_wrapper" id="goal_page">
+    <div class="topbar">
+        <div class="back_btn" onclick="location.href='goals.html'"><img src="assets/images/left_arrow.svg" alt=""></div>
+        <div class="page_title">
+            <span>目标详情</span>
+        </div>
+        <div class="panel">
+            <div class="goal_title"><span>{{ goal.name }}</span></div>
+            <div class="goal_note"><span>{{ goal.note }}</span></div>
+            <div class="calendar_btn"><img src="assets/images/calendar.svg" alt="" onclick="app.week_view=!app.week_view;"></div>
+        </div>
+        <div class="calendar_wrapper">
+            <div class="week_view" v-show="week_view">
+                <ul>
+                    <li class="day-wrapper" v-for="day in current_week_days" v-bind:data-year="day.year" v-bind:data-month="day.month" v-bind:data-day="day.day" v-on:click="select(day.year,day.month,day.day)">
+                        <p class="title">{{ day.name }}</p>
+                        <div class="number_wrapper" v-bind:class="{active:day.date==selected_date.date}">
+                            <span class="number" v-if="day.date==selected_date.date" v-bind:style="{backgroundColor:'#'+goal.color,color:'#ffffff'}">{{ day.day }}</span>
+                            <span class="number" v-else>{{ day.day }}</span>
+                            <div class="indicator" v-if="day.has_footprint" v-bind:style={backgroundColor:'#'+goal.color}></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="month_view" v-show="!week_view">
+                <div class="control_bar">
+                    <div class="next" v-on:click="loadMonthViewData(1);">
+                        <svg fill="#333333" height="30" viewBox="0 0 24 24" width="30" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="prev" v-on:click="loadMonthViewData(-1);">
+                        <svg fill="#333333" height="30" viewBox="0 0 24 24" width="30" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"/>
+                            <path d="M0-.5h24v24H0z" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="month_name">
+                        <div class="year"><span>{{ month_view_data.year }} 年</span></div>
+                        <div class="month"><span>{{month_view_data.month}} 月</span></div>
+                    </div>
+
+                </div>
+                <div class="day_name">
+                    <div class="name" v-for="name in day_name"><span>{{name}}</span></div>
+                </div>
+                <div class="number_list">
+                    <div class="number_wrapper" v-for="day in current_month_days" v-bind:class="{active:day.date==selected_date.date}" v-on:click="select(month_view_data.year,month_view_data.month,day.number)">
+                        <span class="number" v-if="day.date==selected_date.date" v-bind:style="{backgroundColor:'#'+goal.color,color:'#ffffff'}">{{ day.number }}</span>
+                        <span class="number" v-show="day.number>0" v-else>{{day.number}}</span>
+                        <div class="indicator" v-if="day.has_footprint" v-bind:style={backgroundColor:'#'+goal.color}></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="h240" v-show="week_view"></div>
+    <div class="h350" v-show="!week_view"></div>
+
+    <div class="goals_list_wrapper">
+        <div class="empty_msg" v-if="current_day_footprints.length == 0">
+            <span v-if="selected_date.date==today.date">今日还未有打卡记录</span>
+            <span v-else>当日未有打卡记录</span>
+        </div>
+        <ul class="goals_list" v-if="current_day_footprints.length > 0" style="margin: 0">
+            <li class="goal_item" v-for="i in current_day_footprints.length">
+                <div class="index_num"><span class=" footprint" :style="footprint_style">{{i}}</span></div>
+                <div class="title">
+                    <span v-if="selected_date.date==today.date">今日第 {{ i }} 次打卡</span>
+                    <span v-else>当日第 {{ i }} 次打卡</span>
+                </div>
+                <div class="start_date"><span>{{ current_day_footprints[i-1].created_at }}</span></div>
+            </li>
+        </ul>
+        <div class="h20"></div>
+        <div class="btn blue-btn" v-on:click="checkIn()" v-show="today.date==selected_date.date">打卡</div>
+    </div>
+</div>
+<script>
+    function padding(n) {
+        n = parseInt(n);
+        return n>9?""+n:"0"+n;
+    }
+    function calc_date(year, month, day, pace) {
+        year = parseInt(year);
+        month = parseInt(month);
+        day = parseInt(day);
+        var days_number = [31,28,31,30,31,30,31,31,30,31,30,31];
+        if((year%4==0 && year%100!=0) || year%40==0) {
+            days_number[1] += 1;
+        }
+        day = day + pace;
+        if(day<1) {
+            month = month - 1;
+            if(month<1) {
+                year = year - 1;
+                month = month + 12;
+            }
+            day = days_number[month-1] + day;
+        } else if(day>days_number[month-1]) {
+            day = day - days_number[month-1];
+            month = month + 1;
+            if(month>12) {
+                year = year + 1;
+                month = month - 12;
+            }
+        }
+        return {'year':year,'month':month,'day':day, "date":""+year+padding(month)+padding(day)};
+    }
+    var app = new Vue({
+        el : "#goal_page",
+        data : {
+            week_view: true,
+            goal: '',
+            current_day_footprints : {},
+            footprints_list:{},
+            footprint_style:"",
+            selected_date:{year:0, month:0, day_of_m:0, date:""},
+            today:{year:0, month:0, day_of_m:0, date:""},
+            month_view_data: {year:0, month:0},
+            current_month_checked_days:[],
+            checked_days_in_month: [],
+            day_name: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+            footprints:{},
+            current_week_days:[],
+            current_month_days:[]
+        },
+        computed: {
+
+
+        },
+        mounted : function () {
+            var goal_id = getParameterByName('id');
+            var api_url = '/goal/' + goal_id;
+            this.$http.get(api_url).then(function (response) {
+                response = response.body;
+                if(response.code==0) {
+                    this.goal = response.data.goal;
+                    this.footprint_style = 'background-color:#'+ this.goal.color;
+                    var today = new Date();
+                    this.month_view_data.year = this.today.year = today.getFullYear();
+                    this.month_view_data.month = this.today.month = today.getMonth()+1;
+                    this.today.day_of_m = today.getDate();
+                    this.today.date = ""+this.today.year+padding(this.today.month)+padding(this.today.day_of_m);
+                    this.footprints[""+this.today.year+padding(this.today.month)] = response.data.footprints;
+                    this.current_month_days = this.getCurrentMonthDays();
+                    this.select(this.today.year, this.today.month, this.today.day_of_m);
+                } else if(response.code==-1){
+                    location.href = "login.html";
+                } else {
+                    console.log(response);
+                    return false;
+                }
+
+            }, function (response) {
+                console.log(response);
+                return false;
+            });
+            api_url = '/goal/' + goal_id + '/' + this.today.year + '/' + this.today.month;
+            this.$http.get(api_url).then(function (response) {
+                response = response.body;
+                if(response.code==0) {
+                    this.checked_days = response.data;
+                } else if(response.code==-1){
+                    location.href = "login.html";
+                } else {
+                    console.log(response);
+                    return false;
+                }
+
+            }, function (response) {
+                console.log(response);
+                return false;
+            });
+        },
+        methods: {
+            'checkIn': function () {
+                var goal_id = getParameterByName('id');
+                var api_url = '/goal/' + goal_id + "/checkin";
+                this.$http.post(api_url).then(function (response) {
+                    response = response.body;
+                    if(response.code==0) {
+                        location.href = location.href;
+                        return true;
+                    } else if(response.code==-1){
+                        location.href = "login.html";
+                    } else {
+                        console.log(response);
+                        return false;
+                    }
+                }, function (response) {
+                    console.log(response);
+                    return false;
+                });
+            },
+            'select': function (year,month,day) {
+                var date_1 = ""+year+padding(month);
+                var date_2 = date_1+padding(day);
+                if(date_1 in this.footprints && date_2 in this.footprints[date_1]) {
+                    this.current_day_footprints = this.footprints[date_1][date_2];
+                } else {
+                    this.current_day_footprints = [];
+                }
+                this.selected_date.year = year;
+                this.selected_date.month = month;
+                this.selected_date.day_of_m = day;
+                this.selected_date.date = date_2;
+                this.current_week_days = this.getCurrentWeekDays();
+                return 0;
+            },
+            'loadMonthViewData': function (pace) {
+                var month = this.month_view_data.month+pace;
+                if(month<1) {
+                    this.month_view_data.month = 12 + month;
+                    this.month_view_data.year -= 1;
+                } else if(month>12) {
+                    this.month_view_data.month = month - 12;
+                    this.month_view_data.year += 1;
+                } else {
+                    this.month_view_data.month = month;
+                }
+                this.current_month_days = this.getCurrentMonthDays();
+                var t = ""+this.month_view_data.year+padding(this.month_view_data.month);
+                if(t in this.footprints) {
+                    return true;
+                }
+                var api_url = '/goal/' + this.goal.id + '/' + this.month_view_data.year + '/' + this.month_view_data.month;
+                this.$http.get(api_url).then(function (response) {
+                    response = response.body;
+                    if(response.code==0) {
+                        this.footprints[t] = response.data;
+                    } else if(response.code==-1){
+                        location.href = "login.html";
+                    } else {
+                        console.log(response);
+                        return false;
+                    }
+                }, function (response) {
+                    console.log(response);
+                    return false;
+                });
+            },
+            'getCurrentWeekDays': function () {
+                var week = [];
+                var selected_day = new Date(this.selected_date.year, this.selected_date.month-1, this.selected_date.day_of_m);
+                console.log(selected_day);
+                var year = selected_day.getFullYear();
+                var month = selected_day.getMonth()+1;
+                var day_of_m = selected_day.getDate();
+                var day_of_w = selected_day.getDay();
+                day_of_w = day_of_w==0?7:day_of_w;
+                var t = 1-day_of_w;
+                var week_start = calc_date(year, month, day_of_m, t);
+                for(var i=0;i<7;i++) {
+                    var res = calc_date(week_start.year, week_start.month, week_start.day, i);
+                    res['name'] = this.day_name[i];
+
+                    var date_1 = ""+res.year+padding(res.month);
+                    var date_2 = res.date;
+                    if(date_1 in this.footprints && date_2 in this.footprints[date_1]) {
+                        res['has_footprint'] = true;
+                    } else {
+                        res['has_footprint'] = false;
+                    }
+
+                    week.push(res);
+                }
+                return week;
+            },
+            'getCurrentMonthDays' : function () {
+                if(this.month_view_data.year < 1 || this.month_view_data.month<1 || this.month_view_data.month>12) {
+                    return [];
+                }
+                var first_day = new Date(this.month_view_data.year, this.month_view_data.month-1, 1);
+                var last_day = new Date(this.month_view_data.year, this.month_view_data.month, 0);
+                var date_1 = ""+this.month_view_data.year+padding(this.month_view_data.month);
+                var days = [];
+                for(var i=0; i<first_day.getDay()-1; i++) {
+                    days.push({'number':0, 'has_footprint':false, 'date':'0'});
+                }
+                for(i=1; i<=last_day.getDate(); i++) {
+                    var date_2 = date_1 + padding(i);
+                    var day = {
+                        "date":""+this.month_view_data.year+padding(this.month_view_data.month)+padding(i),
+                        "number":i,
+                        "has_footprint": date_1 in this.footprints && date_2 in this.footprints[date_1]
+                    };
+                    days.push(day);
+                }
+                return days;
+            }
+        }
+    });
+</script>
+</body>
+</html>
